@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
         body {
             margin: 0;
             overflow: hidden;
             height: 100vh;
             font-family: Arial, sans-serif;
+            position: relative;
         }
 
         #wxbb {
@@ -73,6 +80,50 @@
             pointer-events: none;
             z-index: 1;
         }
+
+        #control-pad {
+            position: fixed;
+            left: 12px;
+            bottom: 12px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: auto;
+        }
+
+        .control-btn {
+            border: 1px solid #000;
+            background: #fff;
+            color: #000;
+            font-size: 22px;
+            width: 44px;
+            height: 44px;
+            line-height: 44px;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .control-btn:active {
+            background: #eee;
+        }
+
+        @media (max-width: 768px) {
+            #control-pad {
+                left: 10px;
+                bottom: 10px;
+                gap: 4px;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -81,6 +132,12 @@
 <img id="yid" src="zc.png" style="position: absolute; left: auto; top: auto; width: 100px; height: 100px;">
 <button id="wxbb" onclick="zf()">0</button>
 <div id="word">给小宝宝做饭次数</div>
+<div id="control-pad" aria-label="方向控制">
+    <button class="control-btn" id="btn-up" data-key="w">↑</button>
+    <button class="control-btn" id="btn-down" data-key="s">↓</button>
+    <button class="control-btn" id="btn-left" data-key="a">←</button>
+    <button class="control-btn" id="btn-right" data-key="d">→</button>
+</div>
 
 <script>
     let faceChanging = false;
@@ -168,12 +225,13 @@
 
     const hero = document.getElementById('yid');
     const step = 50;
+    let moveTimer = null;
+    const activeKeys = new Set();
 
     hero.style.left = '0px';
     hero.style.top = '0px';
 
-    window.addEventListener('keydown', (event) => {
-        const key = event.key.toLowerCase();
+    function moveHeroByKey(key) {
         const style = window.getComputedStyle(hero);
         let left = parseInt(style.left, 10) || 0;
         let top = parseInt(style.top, 10) || 0;
@@ -187,7 +245,7 @@
         } else if (key === 'd') {
             left += step;
         } else {
-            return;
+            return false;
         }
 
         const heroWidth = hero.offsetWidth;
@@ -209,8 +267,55 @@
 
         hero.style.left = left + 'px';
         hero.style.top = top + 'px';
-        event.preventDefault();
+        return true;
+    }
+
+    function handleMovement(key, event) {
+        const moved = moveHeroByKey(key);
+        if (moved && event) {
+            event.preventDefault();
+        }
+    }
+
+    window.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        if (['w', 'a', 's', 'd'].includes(key)) {
+            handleMovement(key, event);
+        }
     });
+
+    function bindControlButton(button) {
+        const key = button.dataset.key;
+
+        const startMove = (event) => {
+            event.preventDefault();
+            activeKeys.add(key);
+            handleMovement(key);
+
+            if (!moveTimer) {
+                moveTimer = setInterval(() => {
+                    activeKeys.forEach((activeKey) => handleMovement(activeKey));
+                }, 120);
+            }
+        };
+
+        const stopMove = (event) => {
+            event.preventDefault();
+            activeKeys.delete(key);
+            if (activeKeys.size === 0 && moveTimer) {
+                clearInterval(moveTimer);
+                moveTimer = null;
+            }
+        };
+
+        button.addEventListener('pointerdown', startMove);
+        button.addEventListener('pointerup', stopMove);
+        button.addEventListener('pointerleave', stopMove);
+        button.addEventListener('pointercancel', stopMove);
+        button.addEventListener('click', (event) => event.preventDefault());
+    }
+
+    document.querySelectorAll('.control-btn').forEach(bindControlButton);
 
     function checkCollision() {
         const heroRect = hero.getBoundingClientRect();

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+<style>
+   body{
+      margin: 0;
+      height: 100vh;
+      background-color: #eee;
+   }
+   .yingyin{
+      box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+   }
+   .flex{
+      display:flex
+   }
+   .baiSe{
+      background-color: white;
+   }
+   .flex1{
+      flex: 1;
+   }
+   .column{
+      flex-direction: column;
+   }
+   .mg8{
+      margin: 8px;
+   }
+  .mgr8{
+   margin-right: 8px;
+  }
+  .mgt8{
+   margin-top: 8px;
+  }
+  .shuJuQu{
+   gap: 8px;
+  }
+  .shuJu img{
+   display: block;
+   width: 80px;
+  }
+  .daohong{
+   padding: 15px;
+   font-size: 20px;
+  }
+  @media (max-width: 6px) {
+   .ceBian{
+      display: none;
+   }
+   .neiRong{
+   flex-direction: column;
+  }
+  .shuJuQu{
+   flex-direction: column;
+  }
+  .yuoQu{
+   margin-left: 8px;
+  }
+  .shuJu{
+   margin:0 0 8px;
+   flex:auto
+  }
+  }
+  
+</style>
+</head>
+<body class="flex">
+ <!-- 侧边栏 -->
+<div style=" width: 200px; z-index: 1;" class="baiSe yingyin ceBian">
+   <!-- 头像 -->
+<div class="flex">
+ <img src="maino.png" style="width: 80px;">老婆永远唯一的宝
+</div>
+<!-- 导航菜单 -->
+<div>
+   <ul>
+      <li class="daohong"><a href="index2.html">一岁</a></li>
+      <li class="daohong">二岁</li>
+      <li class="daohong">三岁</li>
+      <li class="daohong">四岁</li>
+      <li class="daohong">五岁</li>
+      <li class="daohong">六岁</li>
+   </ul>
+</div>
+</div>
+<!-- 主区域 -->
+<div class="flex1 flex column"> 
+<!-- 头部栏 -->
+ <div style="height: 60px; z-index: 1;" class="baiSe yingyin"></div>
+<!-- 内容区 -->
+ <div class=" flex1 flex" style="overflow:auto">
+ <!-- 左区 -->
+   <div style="flex: 3;" class="flex column mg8">
+<!-- 数据区 -->
+   <div class="flex shuJuQu">
+      <!-- 数据块 -->
+       <div style="height: 150px;" class="shuJu flex1 baiSe yingyin"><img src="cho1.png" style="width: 120px;"></div>
+       <div style="height: 150px;" class="shuJu flex1 baiSe yingyin"><img src="cho2.png" style="width: 120px;"></div>
+       <div style="height: 150px;" class="shuJu flex1 baiSe yingyin"><img src="cho3.png" style="width: 120px;"></div>
+       <div style="height: 150px;" class="shuJu flex1 baiSe yingyin"><img src="cho4.png" style="width: 120px;"></div> 
+   </div>
+<!-- 列表区 -->
+   <div class="flex column">
+      <!-- 列表项 -->
+       <div style="height: 200px;" class="baiSe mgt8 yingyin">小浓日记6.29小宝宝和老婆一起农农努力小宝宝特别安心然后做出了养小鱼鱼小宝宝一岁小笨故事<div></div>小浓日记7.5小宝宝今天不习惯哭哭了老婆哄小宝宝哄好了</div>
+       <div style="height: 200px;" class="baiSe mgt8 yingyin"></div>
+       <div style="height: 200px;" class="baiSe mgt8 yingyin"></div>
+   </div>
+   </div>
+    <!-- 右区 --> 
+ <div style="flex: 1;" class="youQu flex column mgr8 mgt8">
+   <!-- 提示区 -->
+   <div style="height: 300px;" class="baiSe yingyin"></div>
+   <!-- 消息区 -->
+   <div style="height: 600px;" class="baiSe mgt8 yingyin"></div>
+ </div>
+ </div>  
+ </div>
+</body>
+
+</html>

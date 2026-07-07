@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        #wxbb {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        #yid {
+            z-index: 15;
+        }
+
+        #word {
+            position: absolute;
+            left: 50%;
+            top: calc(50% + 8px);
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        #counter-box {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            border: 2px solid #000;
+            background: white;
+            padding: 8px 16px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #bottom-text {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .f-image {
+            position: absolute;
+            top: 20%;
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 10;
+        }
+
+        .temp-face {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            display: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<div id="counter-box">0</div>
+<div id="bottom-text">肥嘟嘟</div>
+<img id="yid" src="zc.png" style="position: absolute; left: auto; top: auto; width: 100px; height: 100px;">
+<button id="wxbb" onclick="zf()">0</button>
+<div id="word">给小宝宝做饭次数</div>
+
+<script>
+    let faceChanging = false;
+
+    function addCounter() {
+        const counterBox = document.getElementById('counter-box');
+        const current = parseInt(counterBox.innerText, 10) || 0;
+        counterBox.innerText = current + 1;
+    }
+
+    function playFaceReaction() {
+        if (faceChanging) {
+            return;
+        }
+
+        faceChanging = true;
+        const hero = document.getElementById('yid');
+        const tempImages = document.querySelectorAll('.temp-face');
+
+        hero.src = 'chi.png';
+        tempImages.forEach((img) => {
+            img.style.display = 'none';
+            img.style.left = '-9999px';
+            img.style.top = '-9999px';
+        });
+
+        setTimeout(() => {
+            hero.src = 'cwl.png';
+            setTimeout(() => {
+                hero.src = 'zc.png';
+                faceChanging = false;
+            }, 1000);
+        }, 1000);
+    }
+
+    function zf() {
+        let ff = window.document.getElementById('wxbb');
+        let zf = parseInt(ff.innerText);
+        let xbsz = zf + 1;
+        ff.innerText = xbsz;
+
+        const images = Array.from(document.querySelectorAll('.f-image'));
+        const direction = xbsz % 2 === 0 ? 'right' : 'left';
+        const maxTop = window.innerHeight - 120;
+        const obstacle = images.find((item) => item.dataset.active !== '1' && (item.style.visibility === 'hidden' || item.style.opacity === '0'))
+            || images.find((item) => item.dataset.active !== '1')
+            || images[0];
+
+        if (obstacle) {
+            const randomTop = Math.floor(Math.random() * maxTop);
+            const randomSpeed = 1 + Math.random() * 3;
+            obstacle.dataset.active = '1';
+            obstacle.style.left = direction === 'right' ? '-140px' : (window.innerWidth + 140) + 'px';
+            obstacle.style.top = randomTop + 'px';
+            obstacle.style.opacity = '1';
+            obstacle.style.visibility = 'visible';
+
+            if (obstacle.moveTimer) {
+                clearTimeout(obstacle.moveTimer);
+            }
+
+            const move = () => {
+                const currentLeft = parseFloat(obstacle.style.left) || 0;
+                const nextLeft = currentLeft + (direction === 'right' ? randomSpeed : -randomSpeed);
+                obstacle.style.left = nextLeft + 'px';
+
+                const imgWidth = obstacle.offsetWidth;
+                const shouldDisappear = direction === 'right'
+                    ? nextLeft > window.innerWidth + imgWidth
+                    : nextLeft < -imgWidth;
+
+                if (shouldDisappear) {
+                    obstacle.dataset.active = '0';
+                    obstacle.style.opacity = '0';
+                    obstacle.style.visibility = 'hidden';
+                    return;
+                }
+
+                obstacle.moveTimer = setTimeout(move, 16);
+            };
+
+            move();
+        }
+    }
+
+    const hero = document.getElementById('yid');
+    const step = 50;
+
+    hero.style.left = '0px';
+    hero.style.top = '0px';
+
+    window.addEventListener('keydown', (event) => {
+        const key = event.key.toLowerCase();
+        const style = window.getComputedStyle(hero);
+        let left = parseInt(style.left, 10) || 0;
+        let top = parseInt(style.top, 10) || 0;
+
+        if (key === 'w') {
+            top -= step;
+        } else if (key === 's') {
+            top += step;
+        } else if (key === 'a') {
+            left -= step;
+        } else if (key === 'd') {
+            left += step;
+        } else {
+            return;
+        }
+
+        const heroWidth = hero.offsetWidth;
+        const heroHeight = hero.offsetHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        if (left < -heroWidth) {
+            left = viewportWidth;
+        } else if (left > viewportWidth) {
+            left = -heroWidth;
+        }
+
+        if (top < -heroHeight) {
+            top = viewportHeight;
+        } else if (top > viewportHeight) {
+            top = -heroHeight;
+        }
+
+        hero.style.left = left + 'px';
+        hero.style.top = top + 'px';
+        event.preventDefault();
+    });
+
+    function checkCollision() {
+        const heroRect = hero.getBoundingClientRect();
+        const obstacles = Array.from(document.querySelectorAll('.f-image'));
+
+        let collidedItem = null;
+        obstacles.forEach((item) => {
+            const style = window.getComputedStyle(item);
+            if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) {
+                return;
+            }
+
+            const rect = item.getBoundingClientRect();
+            const isColliding = heroRect.left < rect.right &&
+                heroRect.right > rect.left &&
+                heroRect.top < rect.bottom &&
+                heroRect.bottom > rect.top;
+
+            if (isColliding) {
+                collidedItem = item;
+            }
+        });
+
+        if (collidedItem) {
+            collidedItem.dataset.active = '0';
+            if (collidedItem.moveTimer) {
+                clearTimeout(collidedItem.moveTimer);
+            }
+            collidedItem.style.opacity = '0';
+            collidedItem.style.visibility = 'hidden';
+            addCounter();
+            playFaceReaction();
+        }
+
+        requestAnimationFrame(checkCollision);
+    }
+
+    requestAnimationFrame(checkCollision);
+</script>
+<img class="temp-face" src="chi.png" style="width: 100px; height: 100px;">
+<img class="temp-face" src="cwl.png" style="width: 100px; height: 100px;">
+<img id="f1" class="f-image" src="f1.png">
+<img id="f2" class="f-image" src="f2.png">
+<img id="f3" class="f-image" src="f3.png">
+<img id="f4" class="f-image" src="f4.png">
+<img id="f5" class="f-image" src="f5.png">
+</body>
+</html>
